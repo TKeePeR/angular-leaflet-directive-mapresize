@@ -41,12 +41,11 @@ angular.module("leaflet-directive").directive('dragmap', function ($compile, $do
         ,require: 'leaflet'
 
         ,link: function(scope, element, attrs, controller) {
-            var isDragging = false, lastY = 0;
-            var content = angular.element('<div style="width:100%; height:5px; background-color: #888;cursor: row-resize; "></div>');
+            var lastY = 0,
+                content = angular.element('<div style="width:100%; height:5px; background-color: #888;cursor: row-resize; "></div>');
             console.log("dragmap.Init", controller, controller.getMap);
             content.insertAfter(element);
             content.on('mousedown', function(event) {
-                isDragging = true;
                 event.preventDefault();
                 lastY = event.screenY;
                 $document.on('mouseup', content.mouseUp);
@@ -54,7 +53,6 @@ angular.module("leaflet-directive").directive('dragmap', function ($compile, $do
             });
 
             content.mouseUp = function(event) {
-                isDragging = false;
                 event.preventDefault();
                 controller.getMap().then(function(map) {
                     map.invalidateSize();
@@ -63,7 +61,6 @@ angular.module("leaflet-directive").directive('dragmap', function ($compile, $do
                 $document.off('mousemove', content.mouseMove);
             };
             content.mouseMove = function(event) {
-                if (!isDragging) return;
                 element.height(element.height()+(event.screenY - lastY));
                 lastY = event.screenY;
                 controller.getMap().then(function(map) {
